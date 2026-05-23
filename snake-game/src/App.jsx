@@ -86,6 +86,28 @@ function App() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
+  //  handlers
+  const resetGame = () => {
+    const initialSnake = INITIAL_SNAKE;
+    const initialFood  = generateFood(initialSnake, BOARD_COLS, BOARD_ROWS);
+
+    snakeRef.current   = initialSnake;
+    foodRef.current    = initialFood;
+    scoreRef.current   = 0;
+    speedRef.current   = INITIAL_SPEED;
+    dirRef.current     = DIRECTIONS.RIGHT;
+    pendingDir.current = DIRECTIONS.RIGHT;
+
+    setSnake(initialSnake);
+    setFood(initialFood);
+    setScore(0);
+    setSpeed(INITIAL_SPEED);
+    setGameState(GAME_STATE.PLAYING);
+  };
+
+  const handleStart   = () => resetGame();
+  const handleRestart = () => resetGame();
+
   // game loop
   useEffect(() => {
     if (gameState !== GAME_STATE.PLAYING) return;
