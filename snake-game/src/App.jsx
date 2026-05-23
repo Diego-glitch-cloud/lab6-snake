@@ -115,7 +115,21 @@ function App() {
     return () => clearInterval(id);
   }, [gameState, speed]);
 
-  return <div className="app" />;
+  return (
+    <div className="app">
+      <Score score={score} highScore={highScore} />
+      <Board cols={BOARD_COLS} rows={BOARD_ROWS} cellSize={CELL_SIZE}>
+        <Snake segments={snake} cellSize={CELL_SIZE} />
+        <Food position={food} cellSize={CELL_SIZE} />
+      </Board>
+      {gameState === GAME_STATE.START && (
+        <StartScreen onStart={handleStart} />
+      )}
+      {gameState === GAME_STATE.GAMEOVER && (
+        <GameOverScreen score={score} highScore={highScore} onRestart={handleRestart} />
+      )}
+    </div>
+  );
 }
 
 export default App;
