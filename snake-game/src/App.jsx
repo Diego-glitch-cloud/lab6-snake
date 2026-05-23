@@ -22,8 +22,9 @@ function App() {
   const foodRef     = useRef(food);
   const scoreRef    = useRef(score);
   const speedRef    = useRef(speed);
-  const dirRef    = useRef(DIRECTIONS.RIGHT);
-  const dirQueue  = useRef([]); // cola de direcciones pendientes
+  const dirRef       = useRef(DIRECTIONS.RIGHT);
+  const dirQueue     = useRef([]);
+  const intervalRef  = useRef(null);
 
   // Sincronizar refs con estado
   useEffect(() => { snakeRef.current  = snake;  }, [snake]);
@@ -76,27 +77,34 @@ function App() {
     setSnake(newSnake);
   };
 
+  const startLoop = (spd) => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(moveSnake, spd);
+  };
+
   useEffect(() => {
     const handleKey = (e) => {
+      if (gameState !== GAME_STATE.PLAYING) return;
       const dirName = KEY_MAP[e.key];
       if (!dirName) return;
 
-      // Dirección efectiva actual = último en cola o dirRef
       const queue = dirQueue.current;
       const lastDir = queue.length > 0 ? queue[queue.length - 1] : dirRef.current;
 
-      // Bloquear opuesta y duplicada
       if (dirName === OPPOSITES[lastDir.name]) return;
       if (dirName === lastDir.name) return;
 
-      // Máximo 2 entradas en cola — evita buffer infinito
       if (queue.length < 2) {
         queue.push(DIRECTIONS[dirName]);
       }
+
+      // Mover inmediatamente y reiniciar interval
+      moveSnake();
+      startLoop(speedRef.current);
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, []);
+  }, [gameState]);
 
   //  handlers
   const resetGame = () => {
@@ -122,9 +130,12 @@ function App() {
 
   // game loop
   useEffect(() => {
-    if (gameState !== GAME_STATE.PLAYING) return;
-    const id = setInterval(moveSnake, speed);
-    return () => clearInterval(id);
+    if (gameState !== GAME_STATE.PLAYING) {
+      clearInterval(intervalRef.current);
+      return;
+    }
+    startLoop(speed);
+    return () => clearInterval(intervalRef.current);
   }, [gameState, speed]);
 
   return (
