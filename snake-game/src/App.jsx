@@ -86,6 +86,13 @@ function App() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
+  // game loop
+  useEffect(() => {
+    if (gameState !== GAME_STATE.PLAYING) return;
+    const id = setInterval(moveSnake, speed);
+    return () => clearInterval(id);
+  }, [gameState, speed]);
+
   return <div className="app" />;
 }
 
