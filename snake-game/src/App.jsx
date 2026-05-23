@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BOARD_COLS, BOARD_ROWS, CELL_SIZE, INITIAL_SNAKE, INITIAL_SPEED, DIRECTIONS, GAME_STATE } from './constants';
+import { BOARD_COLS, BOARD_ROWS, CELL_SIZE, INITIAL_SNAKE, INITIAL_SPEED, DIRECTIONS, OPPOSITES, KEY_MAP, GAME_STATE } from './constants';
 import { generateFood } from './utils/gameUtils';
 import Board from './components/Board';
 import Snake from './components/Snake';
@@ -30,6 +30,18 @@ function App() {
   useEffect(() => { foodRef.current   = food;   }, [food]);
   useEffect(() => { scoreRef.current  = score;  }, [score]);
   useEffect(() => { speedRef.current  = speed;  }, [speed]);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      const dirName = KEY_MAP[e.key];
+      if (!dirName) return;
+      // Bloquear dirección opuesta
+      if (dirName === OPPOSITES[dirRef.current.name]) return;
+      pendingDir.current = { ...DIRECTIONS[dirName], name: dirName };
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
 
   return <div className="app" />;
 }

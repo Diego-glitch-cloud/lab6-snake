@@ -7,10 +7,10 @@ export const SPEED_INCREMENT = 5; // ms menos por cada 5 pts
 export const MIN_SPEED = 60;      // ms floor
 
 export const DIRECTIONS = {
-  UP:    { x:  0, y: -1 },
-  DOWN:  { x:  0, y:  1 },
-  LEFT:  { x: -1, y:  0 },
-  RIGHT: { x:  1, y:  0 },
+  UP:    { x:  0, y: -1, name: 'UP'    },
+  DOWN:  { x:  0, y:  1, name: 'DOWN'  },
+  LEFT:  { x: -1, y:  0, name: 'LEFT'  },
+  RIGHT: { x:  1, y:  0, name: 'RIGHT' },
 };
 
 // Para validar que no se mueva en dirección opuesta
