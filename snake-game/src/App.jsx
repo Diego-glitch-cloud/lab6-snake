@@ -22,8 +22,8 @@ function App() {
   const foodRef     = useRef(food);
   const scoreRef    = useRef(score);
   const speedRef    = useRef(speed);
-  const dirRef      = useRef(DIRECTIONS.RIGHT);
-  const pendingDir  = useRef(DIRECTIONS.RIGHT);
+  const dirRef    = useRef(DIRECTIONS.RIGHT);
+  const dirQueue  = useRef([]); // cola de direcciones pendientes
 
   // Sincronizar refs con estado
   useEffect(() => { snakeRef.current  = snake;  }, [snake]);
@@ -32,8 +32,10 @@ function App() {
   useEffect(() => { speedRef.current  = speed;  }, [speed]);
 
   const moveSnake = () => {
-    // Aplicar dirección pendiente
-    dirRef.current = pendingDir.current;
+    // Consumir siguiente dirección de la cola
+    if (dirQueue.current.length > 0) {
+      dirRef.current = dirQueue.current.shift();
+    }
     const dir = dirRef.current;
 
     const current = snakeRef.current;
@@ -78,9 +80,19 @@ function App() {
     const handleKey = (e) => {
       const dirName = KEY_MAP[e.key];
       if (!dirName) return;
-      // Bloquear dirección opuesta
-      if (dirName === OPPOSITES[dirRef.current.name]) return;
-      pendingDir.current = { ...DIRECTIONS[dirName], name: dirName };
+
+      // Dirección efectiva actual = último en cola o dirRef
+      const queue = dirQueue.current;
+      const lastDir = queue.length > 0 ? queue[queue.length - 1] : dirRef.current;
+
+      // Bloquear opuesta y duplicada
+      if (dirName === OPPOSITES[lastDir.name]) return;
+      if (dirName === lastDir.name) return;
+
+      // Máximo 2 entradas en cola — evita buffer infinito
+      if (queue.length < 2) {
+        queue.push(DIRECTIONS[dirName]);
+      }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
@@ -95,8 +107,8 @@ function App() {
     foodRef.current    = initialFood;
     scoreRef.current   = 0;
     speedRef.current   = INITIAL_SPEED;
-    dirRef.current     = DIRECTIONS.RIGHT;
-    pendingDir.current = DIRECTIONS.RIGHT;
+    dirRef.current   = DIRECTIONS.RIGHT;
+    dirQueue.current = [];
 
     setSnake(initialSnake);
     setFood(initialFood);
