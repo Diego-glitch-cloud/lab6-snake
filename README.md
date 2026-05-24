@@ -4,6 +4,12 @@ Implementación del juego clásico Snake desarrollada con React y Vite como part
 
 ---
 
+## Enlace de juego Deployeado
+
+**https://snake-game-en4wnqbdt-salco-s-projects.vercel.app/**
+
+---
+
 ## Descripción
 
 El proyecto consiste en una aplicación web interactiva del juego Snake. El énfasis del desarrollo estuvo puesto en la arquitectura de la aplicación: separación de responsabilidades en componentes React, manejo de estado con hooks y comunicación entre componentes mediante props.

@@ -35,3 +35,4 @@ lerna-debug.log*
 .idea/
 *.swp
 *.swo
+.vercel
